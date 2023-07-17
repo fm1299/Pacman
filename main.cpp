@@ -1,14 +1,18 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <vector>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 #include "includes/Shader.h"
+#include "includes/Wall.h"
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_WIDTH = 1024;
+const unsigned int SCR_HEIGHT = 720;
 
 int main()
 {
@@ -24,7 +28,7 @@ int main()
     #endif
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Pacman", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -41,7 +45,60 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+    Shader shaderProgram("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
+    Wall bottomWall({ 
+        -1.0f, -0.9f, 0.0f,
+         1.0f, -0.9f, 0.0f,
+        -1.0f, -1.0f, 0.0f,
+         1.0f, -0.9f, 0.0f,
+         1.0f, -1.0f, 0.0f,
+        -1.0f, -1.0f, 0.0f });
+    Wall left_bottom_wall({ 
+        -1.0f, -0.9f, 0.0f,
+        -1.0f, -0.3f, 0.0f,
+        -0.9f, -0.9f, 0.0f,
+        -1.0f, -0.3f, 0.0f,
+        -0.9f, -0.9f, 0.0f,
+        -0.9f, -0.3f, 0.0f });
+    Wall upWall ({ 
+        -1.0f, 1.0f, 0.0f,
+         1.0f, 1.0f, 0.0f,
+        -1.0f, 0.9f, 0.0f,
+         1.0f, 1.0f, 0.0f,
+         1.0f, 0.9f, 0.0f,
+        -1.0f, 0.9f, 0.0f });
 
+    Wall left_up_wall({
+        -1.0f, 0.9f, 0.0f,
+        -1.0f, 0.3f, 0.0f,
+        -0.9f, 0.9f, 0.0f,
+        -1.0f, 0.3f, 0.0f,
+        -0.9f, 0.9f, 0.0f,
+        -0.9f, 0.3f, 0.0f});
+
+    Wall right_up_wall({
+        1.0f, 0.9f, 0.0f,
+        1.0f, 0.3f, 0.0f,
+        0.9f, 0.9f, 0.0f,
+        0.9f, 0.9f, 0.0f,
+        1.0f, 0.3f, 0.0f,
+        0.9f, 0.3f, 0.0f});
+    Wall right_bottom_wall({
+        1.0f, -0.9f, 0.0f,
+        1.0f, -0.3f, 0.0f,
+        0.9f, -0.9f, 0.0f,
+        1.0f, -0.3f, 0.0f,
+        0.9f, -0.9f, 0.0f,
+        0.9f, -0.3f, 0.0f
+        });
+    Wall left_wall({
+        -0.6f,  0.6f, 0.0f,
+        -0.6f, -0.6f, 0.0f,
+        -0.5f, 0.6f, 0.0f,
+        -0.5f, 0.6f, 0.0f,
+        -0.6f, -0.6f, 0.0f,
+        -0.5f, -0.6f, 0.0f
+        });
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -52,9 +109,17 @@ int main()
 
         // render
         // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        shaderProgram.use();
+        bottomWall.Draw();
+        left_bottom_wall.Draw();
+        upWall.Draw();
+        left_up_wall.Draw();
+        right_up_wall.Draw();
+        right_bottom_wall.Draw();
+        left_wall.Draw();
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);

@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\fmatt\Documents\University\UNSA\Semestre VII\Computer Graphics\Final Project\Pacman\OpenGL\include;C:\Users\fmatt\Documents\University\UNSA\Semestre VII\Computer Graphics\Final Project\Pacman\glad\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\fmatt\Documents\University\UNSA\Semestre VII\Computer Graphics\Final Project\Pacman\OpenGL\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\OpenGL\include;$(SolutionDir)\glad\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\OpenGL\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -137,6 +137,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\Shader.h" />
+    <ClInclude Include="includes\Wall.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\fragment_shader.glsl" />
+    <None Include="shaders\vertex_shader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
