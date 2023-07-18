@@ -6,6 +6,7 @@
 #include "includes/Shader.h"
 #include "includes/Wall.h"
 #include <iostream>
+#include <glm/gtc/type_ptr.hpp>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -13,6 +14,62 @@ void processInput(GLFWwindow* window);
 // settings
 const unsigned int SCR_WIDTH = 1024;
 const unsigned int SCR_HEIGHT = 720;
+
+void drawCircle(Shader& shaderProgram)
+{
+    unsigned int vao, vbo;
+
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+    float radius = 0.05f;
+    int numSegments = 100;
+    float segmentAngle = 2.0f * 3.1415926f / numSegments;
+
+    std::vector<float> vertices;
+    vertices.push_back(0.0f);
+    vertices.push_back(0.0f);
+
+    for (int i = 0; i <= numSegments; i++)
+    {
+        float angle = segmentAngle * i;
+        float x = radius * cos(angle);
+        float y = radius * sin(angle);
+        vertices.push_back(x);
+        vertices.push_back(y);
+    }
+
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
+    glEnableVertexAttribArray(0);
+
+    // Define the colors for each section
+    std::vector<glm::vec3> colors{
+        glm::vec3(0.58f, 0.0f, 0.83f),   // Purple
+            glm::vec3(1.0f, 0.0f, 0.0f),   // Red
+            glm::vec3(1.0f, 0.50f, 0.0f),   // Orange
+            glm::vec3(1.0f, 1.0f, 0.0f),   // Yellow
+            glm::vec3(0.0f, 0.5f, 0.0f),   // Green
+            glm::vec3(0.0f, 0.0f, 1.0f),   // Blue
+            glm::vec3(0.29f, 0.0f, 0.51f)    // Dark purple
+    };
+
+    // Draw each section with a different color
+    shaderProgram.use();
+    for (int i = 0; i < colors.size(); i++)
+    {
+        glUniform3fv(glGetUniformLocation(shaderProgram.ID, "color"), 1, glm::value_ptr(colors[i]));
+        glDrawArrays(GL_TRIANGLE_FAN, i * (numSegments / colors.size()), 54.5);
+    }
+
+    glDisableVertexAttribArray(0);
+    glDeleteBuffers(1, &vbo);
+    glDeleteVertexArrays(1, &vao);
+}
+
 
 int main()
 {
@@ -92,13 +149,23 @@ int main()
         0.9f, -0.3f, 0.0f
         });
     Wall left_wall({
-        -0.6f,  0.6f, 0.0f,
-        -0.6f, -0.6f, 0.0f,
-        -0.5f, 0.6f, 0.0f,
-        -0.5f, 0.6f, 0.0f,
-        -0.6f, -0.6f, 0.0f,
-        -0.5f, -0.6f, 0.0f
+        -0.7f,  0.6f, 0.0f,
+        -0.7f, -0.6f, 0.0f,
+        -0.6f, 0.6f, 0.0f,
+        -0.6f, 0.6f, 0.0f,
+        -0.7f, -0.6f, 0.0f,
+        -0.6f, -0.6f, 0.0f
         });
+    Wall right_wall({
+        0.7f, 0.6f, 0.0f,
+        0.7f, -0.6f, 0.0f,
+        0.6f, 0.6f, 0.0f,
+        0.6f, 0.6f, 0.0f,
+        0.7f, -0.6f, 0.0f,
+        0.6f, -0.6f, 0.0f
+        });
+
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -120,6 +187,11 @@ int main()
         right_up_wall.Draw();
         right_bottom_wall.Draw();
         left_wall.Draw();
+        right_wall.Draw();
+        
+        
+        drawCircle(shaderProgram);
+
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
