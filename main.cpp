@@ -1,75 +1,26 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <vector>
+#include <iostream>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <vector>
 #include "includes/Shader.h"
 #include "includes/Wall.h"
-#include <iostream>
-#include <glm/gtc/type_ptr.hpp>
+#include "includes/pacman.h"
 
+
+float movementX = 0.0f;
+float movementY = 0.0f;
+float speed = 0.0005f;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
 
 // settings
 const unsigned int SCR_WIDTH = 1024;
 const unsigned int SCR_HEIGHT = 720;
-
-void drawCircle(Shader& shaderProgram)
-{
-    unsigned int vao, vbo;
-
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-    float radius = 0.05f;
-    int numSegments = 100;
-    float segmentAngle = 2.0f * 3.1415926f / numSegments;
-
-    std::vector<float> vertices;
-    vertices.push_back(0.0f);
-    vertices.push_back(0.0f);
-
-    for (int i = 0; i <= numSegments; i++)
-    {
-        float angle = segmentAngle * i;
-        float x = radius * cos(angle);
-        float y = radius * sin(angle);
-        vertices.push_back(x);
-        vertices.push_back(y);
-    }
-
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
-    glEnableVertexAttribArray(0);
-
-    // Define the colors for each section
-    std::vector<glm::vec3> colors{
-        glm::vec3(0.58f, 0.0f, 0.83f),   // Purple
-            glm::vec3(1.0f, 0.0f, 0.0f),   // Red
-            glm::vec3(1.0f, 0.50f, 0.0f),   // Orange
-            glm::vec3(1.0f, 1.0f, 0.0f),   // Yellow
-            glm::vec3(0.0f, 0.5f, 0.0f),   // Green
-            glm::vec3(0.0f, 0.0f, 1.0f),   // Blue
-            glm::vec3(0.29f, 0.0f, 0.51f)    // Dark purple
-    };
-
-    // Draw each section with a different color
-    shaderProgram.use();
-    for (int i = 0; i < colors.size(); i++)
-    {
-        glUniform3fv(glGetUniformLocation(shaderProgram.ID, "color"), 1, glm::value_ptr(colors[i]));
-        glDrawArrays(GL_TRIANGLE_FAN, i * (numSegments / colors.size()), 54.5);
-    }
-
-    glDisableVertexAttribArray(0);
-    glDeleteBuffers(1, &vbo);
-    glDeleteVertexArrays(1, &vao);
-}
-
 
 int main()
 {
@@ -103,6 +54,7 @@ int main()
         return -1;
     }
     Shader shaderProgram("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
+    Shader pacmanProgram("shaders/pacman_vertex.glsl", "shaders/fragment_shader.glsl");
     Wall bottomWall({ 
         -1.0f, -0.9f, 0.0f,
          1.0f, -0.9f, 0.0f,
@@ -164,12 +116,13 @@ int main()
         0.7f, -0.6f, 0.0f,
         0.6f, -0.6f, 0.0f
         });
-
+    Pacman pacman;
 
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
+        glm::mat4 transform = glm::mat4(1.0f);
         // input
         // -----
         processInput(window);
@@ -180,6 +133,7 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         shaderProgram.use();
+        glUniform3f(glGetUniformLocation(shaderProgram.ID, "vertexColor"), 0.0f, 0.0f, 1.0f);
         bottomWall.Draw();
         left_bottom_wall.Draw();
         upWall.Draw();
@@ -188,10 +142,14 @@ int main()
         right_bottom_wall.Draw();
         left_wall.Draw();
         right_wall.Draw();
-        
-        
-        drawCircle(shaderProgram);
-
+        glUseProgram(0);
+        pacmanProgram.use();
+        transform = glm::translate(transform, glm::vec3(movementX, 0.0f, 0.0f));
+        transform = glm::translate(transform, glm::vec3(0.0f, movementY, 0.0f));
+        unsigned int transLoc = glGetUniformLocation(pacmanProgram.ID, "transform");
+        glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]/*glm::value_ptr(transform)*/);
+        glUniform3f(glGetUniformLocation(pacmanProgram.ID, "vertexColor"), 1.0f, 1.0f, 0.0f);
+        pacman.draw();
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -210,6 +168,22 @@ void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+    {
+        movementX -= speed;
+    }
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+    {
+        movementX += speed;
+    }
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        movementY += speed;
+    }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        movementY -= speed;
+    }
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
