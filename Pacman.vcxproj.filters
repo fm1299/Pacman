@@ -32,12 +32,18 @@
     <ClInclude Include="includes\Wall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="includes\pacman.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\vertex_shader.glsl">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="shaders\fragment_shader.glsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\pacman_vertex.glsl">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

@@ -136,11 +136,13 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\pacman.h" />
     <ClInclude Include="includes\Shader.h" />
     <ClInclude Include="includes\Wall.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment_shader.glsl" />
+    <None Include="shaders\pacman_vertex.glsl" />
     <None Include="shaders\vertex_shader.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

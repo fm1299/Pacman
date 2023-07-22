@@ -17,10 +17,12 @@ public:
 		this->VBO = 0;
 		this->loadData();
 	}
+	~Wall();
 	unsigned int getVAO();
 	unsigned int getVBO();
 	void Draw();
 };
+
 inline unsigned int Wall::getVAO()
 {
 	return this->VAO;
@@ -41,10 +43,16 @@ inline void Wall::loadData()
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+	/*glDisableVertexAttribArray(0);
+	glDeleteBuffers(1, &this->VBO);
+	glDeleteVertexArrays(1, &this->VAO);*/
 }
 inline void Wall::Draw()
 {
 	glBindVertexArray(this->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+inline Wall::~Wall()
+{
 }
 #endif
