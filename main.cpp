@@ -1,16 +1,14 @@
 #include <iostream>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
+#include "includes/Game.h"
 #include "includes/Shader.h"
 #include "includes/Wall.h"
 #include "includes/pacman.h"
-
 
 float movementX = 0.0f;
 float movementY = 0.0f;
@@ -24,28 +22,9 @@ const unsigned int SCR_HEIGHT = 720;
 
 int main()
 {
-    // glfw: initialize and configure
-    // ------------------------------
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    #ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    #endif
-    // glfw window creation
-    // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Pacman", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
+    Game game(SCR_WIDTH, SCR_HEIGHT);
+    glfwMakeContextCurrent(game.getWindow());
+    glfwSetFramebufferSizeCallback(game.getWindow(), framebuffer_size_callback);
     // glad: load all OpenGL function pointers
     // ---------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -120,12 +99,12 @@ int main()
 
     // render loop
     // -----------
-    while (!glfwWindowShouldClose(window))
+    while (game.isOpen())
     {
         glm::mat4 transform = glm::mat4(1.0f);
         // input
         // -----
-        processInput(window);
+        processInput(game.getWindow());
 
         // render
         // ------
@@ -152,7 +131,7 @@ int main()
         pacman.draw();
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(game.getWindow());
         glfwPollEvents();
     }
 
