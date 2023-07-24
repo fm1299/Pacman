@@ -48,7 +48,7 @@ inline void Wall::loadData()
 inline void Wall::Draw()
 {
 	glBindVertexArray(this->VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_TRIANGLES, 0, this->coordinates.size() / 3);
 }
 inline Wall::~Wall()
 {
