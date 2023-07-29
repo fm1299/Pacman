@@ -9,23 +9,66 @@ private:
 	unsigned int VAO;
 	unsigned int VBO;
 public:
-	Wall(std::vector<float> data) : coordinates(data)
+	Wall()
 	{
+		this->coordinates = {
+            -0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+            -0.5f,  0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+
+            -0.5f, -0.5f,  0.5f,
+             0.5f, -0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+            -0.5f, -0.5f,  0.5f,
+
+            -0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+
+             0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+
+            -0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f,  0.5f,
+             0.5f, -0.5f,  0.5f,
+            -0.5f, -0.5f,  0.5f,
+            -0.5f, -0.5f, -0.5f,
+
+            -0.5f,  0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+             0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f, -0.5f
+		};
 		this->VAO = 0;
 		this->VBO = 0;
 		this->loadData();
 	}
 	~Wall();
-	unsigned int getVAO();
-	unsigned int getVBO();
+	unsigned int& getVAO();
+	unsigned int& getVBO();
 	void Draw();
 };
 
-inline unsigned int Wall::getVAO()
+inline unsigned int& Wall::getVAO()
 {
 	return this->VAO;
 }
-inline unsigned int Wall::getVBO()
+inline unsigned int& Wall::getVBO()
 {
 	return this->VBO;
 }
@@ -47,7 +90,6 @@ inline void Wall::loadData()
 }
 inline void Wall::Draw()
 {
-	glBindVertexArray(this->VAO);
 	glDrawArrays(GL_TRIANGLES, 0, this->coordinates.size() / 3);
 }
 inline Wall::~Wall()
