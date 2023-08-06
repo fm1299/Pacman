@@ -7,12 +7,12 @@
 #include <vector>
 #include "includes/Game.h"
 #include "includes/Shader.h"
-#include "includes/Wall.h"
+#include "includes/Level.h"
 #include "includes/pacman.h"
 
 float movementX = 0.0f;
 float movementY = 0.0f;
-float speed = 0.0005f;
+float speed = 0.0008f;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
@@ -54,8 +54,8 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
     Shader shaderProgram("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
-    Wall wall;
-    std::vector<std::vector<char>> map = {
+
+    Level map1({
        { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X','X', 'X' },
        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X' },
        { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X' },
@@ -71,45 +71,33 @@ int main()
        { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X' },
        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X' },
        { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X','X', 'X' }
-    };
+        },shaderProgram);
     //Mapa 02
-    std::vector<std::vector<char>> map2 = {
-         { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X','X', 'X' },
-         { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X' },
-         { 'X', ' ', 'X', ' ', 'X', ' ', 'X', 'X', 'X',' ', 'X' },
-         { 'X', ' ', 'X', ' ', ' ', ' ', ' ', ' ', 'X',' ', 'X' },
-         { 'X', ' ', 'X', 'X', 'X', ' ', 'X', ' ', ' ',' ', 'X' },
-         { 'X', ' ', ' ', ' ', ' ', ' ', 'X', 'X', 'X',' ', 'X' },
-         { 'X', 'X', ' ', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
-         { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X' },
-         { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
-         { 'X', ' ', ' ', ' ', ' ', ' ', 'X', ' ', 'X',' ', 'X' },
-         { 'X', 'X', ' ', 'X', 'X', ' ', 'X', 'X', ' ',' ', 'X' },
-         { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'X',' ', 'X' },
-         { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X' },
-         { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X' },
-         { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X','X', 'X' }
-    };
 
-    std::vector<std::vector<std::vector<char>>> maps = { map, map2 };
+    Level map2({
+        { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X','X', 'X', 'X', 'X','X', 'X' },
+        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ',' ', 'X' },
+        { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X', ' ', 'X',' ', 'X' },
+        { 'X', ' ', 'X', ' ', ' ', ' ', ' ', ' ', 'X',' ', 'X', ' ', 'X',' ', 'X' },
+        { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', ' ', ' ', 'X',' ', 'X' },
+        { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', ' ', ' ', 'X',' ', 'X' },
+        { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', ' ', 'X', ' ',' ', 'X' },
+        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ',' ', 'X' },
+        { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X', ' ', 'X',' ', 'X' },
+        { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X', ' ', 'X',' ', 'X' },
+        { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', ' ', ' ', ' ',' ', 'X' },
+        { 'X', ' ', 'X', ' ', ' ', ' ', ' ', ' ', 'X',' ', ' ', 'X', ' ',' ', 'X' },
+        { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', ' ', ' ', ' ',' ', 'X' },
+        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X', ' ', 'X',' ', 'X' },
+        { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X', ' ', 'X',' ', 'X' },
+        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X', ' ', 'X',' ', 'X' },
+        { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X', ' ', 'X',' ', 'X' },
+        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ',' ', 'X' },
+        { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X','X', 'X', 'X', 'X','X', 'X' },
+        },shaderProgram);
 
-    // Tamaño de cada celda en el mapa
-    float cellSize = 1.0f;
-    // Recorrer el mapa y generar las posiciones de los cubos
-    std::vector<glm::vec3> cubePositions;
-    for (size_t i = 0; i < map.size(); i++)
-    {
-        for (size_t j = 0; j < map[i].size(); j++)
-        {
-            if (map[i][j] == 'X')
-            {
-                float x = static_cast<float>(j) * cellSize;
-                float z = static_cast<float>(i) * cellSize;
-                cubePositions.push_back(glm::vec3(x, 0.0f, -z)); // Agregar posición al arreglo
-            }
-        }
-    }
     Pacman pacman;
+    int level = 0;
     // render loop
     // -----------
     while (game.isOpen())
@@ -120,8 +108,6 @@ int main()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         glm::mat4 model = glm::mat4(1.0f);
-        /*glm::mat4 view = glm::mat4(1.0f);*/
-
         // input
         // -----
         processInput(game.getWindow());
@@ -133,28 +119,34 @@ int main()
 
         shaderProgram.use();
         shaderProgram.setVec3("vertexColor", glm::vec3(0.0f, 0.0f, 1.0f));
-        //model = glm::rotate(model, glm::radians(40.0f), glm::vec3(1.0f, 0.0f, 0.0f));
         // camera/view transformation
-        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         glm::mat4 projection = projection = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
         shaderProgram.setMat4("view", view);
         shaderProgram.setMat4("projection", projection);
-        glBindVertexArray(wall.getVAO());
-        for (const auto& pos : cubePositions)
+        if (level == 0)
         {
-            glm::mat4 model = glm::mat4(1.0f);
-            model = glm::translate(model, pos);
-            shaderProgram.setMat4("model", model);
-            wall.Draw();
+            map1.Draw();
+        }
+        else
+        {
+            map2.Draw();
         }
         model = glm::translate(model, glm::vec3(movementX, 0.0f, 0.0f));
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, movementY));
-        shaderProgram.setMat4("view", view);
-        shaderProgram.setMat4("projection", projection);
         shaderProgram.setMat4("model", model);
         shaderProgram.setVec3("vertexColor", glm::vec3(1.0f, 1.0f, 0.0f));
         pacman.draw();
-
+        
+        //Prueba 
+        if (glfwGetKey(game.getWindow(), GLFW_KEY_M) == GLFW_PRESS)
+        {
+            level = 1;
+        }
+        else if (glfwGetKey(game.getWindow(), GLFW_KEY_Z) == GLFW_PRESS)
+        {
+            level = 0;
+        }
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(game.getWindow());

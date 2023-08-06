@@ -1,6 +1,5 @@
 #ifndef WALL_H
 #define WALL_H
-#include <vector>
 class Wall
 {
 private:

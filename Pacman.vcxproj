@@ -137,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\Game.h" />
+    <ClInclude Include="includes\Level.h" />
     <ClInclude Include="includes\pacman.h" />
     <ClInclude Include="includes\Shader.h" />
     <ClInclude Include="includes\Wall.h" />
