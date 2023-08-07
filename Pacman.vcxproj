@@ -71,8 +71,8 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)\OpenGL\include;$(SolutionDir)\glad\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\OpenGL\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)\OpenGL\include;$(SolutionDir)\glad\include;$(SolutionDir)\Freetype\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\OpenGL\lib;$(SolutionDir)\Freetype\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -112,7 +112,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -136,16 +136,29 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="includes\Camera.h" />
     <ClInclude Include="includes\Game.h" />
+    <ClInclude Include="includes\GameObject.h" />
     <ClInclude Include="includes\Level.h" />
-    <ClInclude Include="includes\pacman.h" />
+    <ClInclude Include="includes\Object.h" />
     <ClInclude Include="includes\Shader.h" />
+    <ClInclude Include="includes\TextRenderer.h" />
     <ClInclude Include="includes\Wall.h" />
+    <ClInclude Include="shaders\Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fragment_shader.glsl" />
-    <None Include="shaders\pacman_vertex.glsl" />
+    <None Include="shaders\pacman_fs.glsl" />
+    <None Include="shaders\pacman_vs.glsl" />
+    <None Include="shaders\Text_fs.glsl" />
+    <None Include="shaders\Text_vs.glsl" />
     <None Include="shaders\vertex_shader.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Fonts\OCRAEXT.TTF" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\bricks.jpeg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,30 +8,30 @@
 #include "includes/Game.h"
 #include "includes/Shader.h"
 #include "includes/Level.h"
-#include "includes/pacman.h"
+#include "includes/Object.h"
+#include "includes/Camera.h"
+#include "includes/TextRenderer.h"
 
+// settings
+const unsigned int SCR_WIDTH = 1024;
+const unsigned int SCR_HEIGHT = 720;
+//Movement
 float movementX = 0.0f;
 float movementY = 0.0f;
-float speed = 0.0008f;
+float speed = 0.008f;
+
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
-// settings
-const unsigned int SCR_WIDTH = 1024;
-const unsigned int SCR_HEIGHT = 720;
-// camera
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
+//Camera
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+float lastX = SCR_WIDTH / 2.0f;
+float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
-float yaw = -90.0f;	
-float pitch = 0.0f;
-float lastX = 800.0f / 2.0;
-float lastY = 600.0 / 2.0;
-float fov = 45.0f;
+
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
@@ -53,6 +53,8 @@ int main()
     }
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     Shader shaderProgram("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
 
     Level map1({
@@ -69,7 +71,7 @@ int main()
        { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
        { 'X', ' ', 'X', ' ', ' ', ' ', ' ', ' ', 'X',' ', 'X' },
        { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X' },
-       { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X' },
+       { 'X', '0', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X' },
        { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X','X', 'X' }
         },shaderProgram);
     //Mapa 02
@@ -92,11 +94,14 @@ int main()
         { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X', ' ', 'X',' ', 'X' },
         { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X', ' ', 'X',' ', 'X' },
         { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X', ' ', 'X',' ', 'X' },
-        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ',' ', 'X' },
+        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', '0', ' ',' ', ' ', ' ', ' ',' ', 'X' },
         { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X','X', 'X', 'X', 'X','X', 'X' },
         },shaderProgram);
 
-    Pacman pacman;
+    Object pacman(0.32f);
+    TextRenderer text(SCR_WIDTH, SCR_HEIGHT);
+
+    text.Load("Fonts/OCRAEXT.TTF", 24);
     int level = 0;
     // render loop
     // -----------
@@ -120,10 +125,10 @@ int main()
         shaderProgram.use();
         shaderProgram.setVec3("vertexColor", glm::vec3(0.0f, 0.0f, 1.0f));
         // camera/view transformation
-        glm::mat4 projection = projection = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-        shaderProgram.setMat4("view", view);
+        glm::mat4 projection = projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         shaderProgram.setMat4("projection", projection);
+        glm::mat4 view = camera.GetViewMatrix();
+        shaderProgram.setMat4("view", view);
         if (level == 0)
         {
             map1.Draw();
@@ -137,7 +142,7 @@ int main()
         shaderProgram.setMat4("model", model);
         shaderProgram.setVec3("vertexColor", glm::vec3(1.0f, 1.0f, 0.0f));
         pacman.draw();
-        
+        text.RenderText("Texto de prueba", 5.0f, 5.0f, 1.0f);
         //Prueba 
         if (glfwGetKey(game.getWindow(), GLFW_KEY_M) == GLFW_PRESS)
         {
@@ -181,15 +186,15 @@ void processInput(GLFWwindow* window)
     {
         movementY += speed;
     }
-    float cameraSpeed = static_cast<float>(2.5 * deltaTime);
+    /*float cameraSpeed = static_cast<float>(2.5 * deltaTime);*/
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
+        camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        cameraPos -= cameraSpeed * cameraFront;
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        camera.ProcessKeyboard(RIGHT, deltaTime);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -218,33 +223,12 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     lastX = xpos;
     lastY = ypos;
 
-    float sensitivity = 0.1f; // change this value to your liking
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
-
-    yaw += xoffset;
-    pitch += yoffset;
-
-    // make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (pitch > 89.0f)
-        pitch = 89.0f;
-    if (pitch < -89.0f)
-        pitch = -89.0f;
-
-    glm::vec3 front;
-    front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    front.y = sin(glm::radians(pitch));
-    front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(front);
+    camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    fov -= (float)yoffset;
-    if (fov < 1.0f)
-        fov = 1.0f;
-    if (fov > 45.0f)
-        fov = 45.0f;
+    camera.ProcessMouseScroll(static_cast<float>(yoffset));
 }

@@ -1,36 +1,42 @@
-#ifndef PACMAN_H
-#define PACMAN_H
+#ifndef OBJECT_H
+#define OBJECT_H
 
-class Pacman
+class Object
 {
 private:
 	std::vector<float> position;
     std::vector<unsigned int> indices;
+    float initialPosX;
+    float initialPosY;
 	void loadData();
 	unsigned int VAO;
 	unsigned int VBO;
     unsigned int EBO;
+    float radious;
 public:
-	Pacman();
+	Object(float rd/*, float posX, float posY*/);
     void draw();
-	~Pacman();
+	~Object();
 
 };
 
-inline Pacman::Pacman()
+inline Object::Object(float rd/*float posX,float posY*/)
 {
+    this->initialPosX = 0;
+    this->initialPosY = 0;
     this->VAO = 0;
     this->VBO = 0;
+    this->radious = rd;
     loadData();
 }
 
-inline void Pacman::draw()
+inline void Object::draw()
 {
     glBindVertexArray(this->VAO);
     glDrawElements(GL_TRIANGLES,this->indices.size(), GL_UNSIGNED_INT, 0);
 }
 
-inline void Pacman::loadData()
+inline void Object::loadData()
 {
     glGenVertexArrays(1, &this->VAO);
     glGenBuffers(1, &this->VBO);
@@ -39,7 +45,6 @@ inline void Pacman::loadData()
     
     int sectors = 100;
     int stacks = 100;
-    float radious = 0.2f;
     for (int i = 0; i <= stacks; ++i)
     {
         float V = i / (float)stacks;
@@ -48,9 +53,9 @@ inline void Pacman::loadData()
         {
             float U = j / (float)sectors;
             float theta = U * (glm::pi<float>() * 2);
-            float x = radious * cos(theta) * sin(phi);
-            float y = radious * cos(phi);
-            float z = radious * sin(theta) * sin(phi);
+            float x = this->radious * cos(theta) * sin(phi) + this->initialPosX;
+            float y = this->radious * cos(phi);
+            float z = this->radious * sin(theta) * sin(phi) + this->initialPosY;
             this->position.push_back(x);
             this->position.push_back(y);
             this->position.push_back(z);
@@ -88,7 +93,7 @@ inline void Pacman::loadData()
     glBindVertexArray(0);
 }
 
-Pacman::~Pacman()
+Object::~Object()
 {
 }
 #endif
