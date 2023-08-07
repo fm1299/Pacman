@@ -3,10 +3,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include "includes/Camera.h"
 class Game
 {
 private:
 	GLFWwindow *window;
+	Camera camera;
 	int screen_width;
 	int screen_heigh;
 	void initOpengl();
@@ -15,6 +17,7 @@ public:
 	Game(int width, int height);
 	GLFWwindow*& getWindow();
 	bool isOpen();
+	void render();
 	~Game();
 };
 inline void Game::initOpengl()
@@ -34,7 +37,7 @@ inline void Game::initWindow()
 	}
 }
 
-inline Game::Game(int width, int height)
+inline Game::Game(int width, int height) : camera(glm::vec3(0.0f, 0.0f, 3.0f))
 {
 	this->screen_width = width;
 	this->screen_heigh = height;
@@ -50,6 +53,11 @@ inline GLFWwindow*& Game::getWindow()
 inline bool Game::isOpen()
 {
 	return !glfwWindowShouldClose(window);
+}
+
+inline void Game::render()
+{
+
 }
 
 inline Game::~Game()

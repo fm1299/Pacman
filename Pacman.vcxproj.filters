@@ -16,6 +16,12 @@
     <Filter Include="Resource Files\Shaders">
       <UniqueIdentifier>{23bd4470-d2b4-4aba-a7d1-b13ab45ef40b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Fonts">
+      <UniqueIdentifier>{331b9756-e90d-4f39-be80-c34ab8fd590e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{35c3717e-a639-44b5-848f-153b449c9b24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad\src\glad.c">
@@ -32,10 +38,25 @@
     <ClInclude Include="includes\Wall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="includes\pacman.h">
+    <ClInclude Include="includes\Object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\Game.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Level.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="includes\TextRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shaders\Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -46,8 +67,27 @@
     <None Include="shaders\fragment_shader.glsl">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="shaders\pacman_vertex.glsl">
+    <None Include="shaders\Text_vs.glsl">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="shaders\Text_fs.glsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\pacman_vs.glsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="shaders\pacman_fs.glsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Fonts\OCRAEXT.TTF">
+      <Filter>Resource Files\Fonts</Filter>
+    </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\bricks.jpeg">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
