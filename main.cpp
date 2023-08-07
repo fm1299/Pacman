@@ -1,23 +1,22 @@
-#include <iostream>
+#include <sstream>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <vector>
-#include "includes/Game.h"
 #include "includes/Shader.h"
 #include "includes/Level.h"
 #include "includes/Object.h"
-#include "includes/Camera.h"
 #include "includes/TextRenderer.h"
+#include "includes/Game.h"
 
 // settings
 const unsigned int SCR_WIDTH = 1024;
 const unsigned int SCR_HEIGHT = 720;
 //Movement
 float movementX = 0.0f;
-float movementY = 0.0f;
+float movementZ = 0.0f;
 float speed = 0.008f;
 
 
@@ -27,7 +26,6 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 //Camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
@@ -35,9 +33,10 @@ bool firstMouse = true;
 // timing
 float deltaTime = 0.0f;	// time between current frame and last frame
 float lastFrame = 0.0f;
+
+Game game(SCR_WIDTH, SCR_HEIGHT);
 int main()
 {
-    Game game(SCR_WIDTH, SCR_HEIGHT);
     glfwMakeContextCurrent(game.getWindow());
     glfwSetFramebufferSizeCallback(game.getWindow(), framebuffer_size_callback);
     glfwSetCursorPosCallback(game.getWindow(), mouse_callback);
@@ -56,29 +55,28 @@ int main()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     Shader shaderProgram("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl");
-
     Level map1({
        { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X','X', 'X' },
-       { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X' },
-       { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X' },
-       { 'X', ' ', 'X', ' ', ' ', ' ', ' ', ' ', 'X',' ', 'X' },
-       { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
-       { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
-       { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
-       { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X' },
-       { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
-       { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
-       { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
-       { 'X', ' ', 'X', ' ', ' ', ' ', ' ', ' ', 'X',' ', 'X' },
-       { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X' },
        { 'X', '0', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X' },
+       { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X' },
+       { 'X', ' ', 'X', ' ', ' ', ' ', ' ', ' ', 'X',' ', 'X' },
+       { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
+       { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
+       { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
+       { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X' },
+       { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
+       { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
+       { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', 'X' },
+       { 'X', ' ', 'X', ' ', ' ', ' ', ' ', ' ', 'X',' ', 'X' },
+       { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X' },
+       { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X' },
        { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X','X', 'X' }
         },shaderProgram);
     //Mapa 02
 
     Level map2({
         { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X','X', 'X', 'X', 'X','X', 'X' },
-        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ',' ', 'X' },
+        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', '0', ' ',' ', ' ', ' ', ' ',' ', 'X' },
         { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X', ' ', 'X',' ', 'X' },
         { 'X', ' ', 'X', ' ', ' ', ' ', ' ', ' ', 'X',' ', 'X', ' ', 'X',' ', 'X' },
         { 'X', ' ', 'X', ' ', 'X', ' ', 'X', ' ', 'X',' ', ' ', ' ', 'X',' ', 'X' },
@@ -94,13 +92,11 @@ int main()
         { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X', ' ', 'X',' ', 'X' },
         { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', 'X', ' ', 'X',' ', 'X' },
         { 'X', ' ', 'X', 'X', 'X', ' ', 'X', 'X', 'X',' ', 'X', ' ', 'X',' ', 'X' },
-        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', '0', ' ',' ', ' ', ' ', ' ',' ', 'X' },
+        { 'X', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',' ', ' ', ' ', ' ',' ', 'X' },
         { 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X', 'X','X', 'X', 'X', 'X','X', 'X' },
         },shaderProgram);
 
-    Object pacman(0.32f);
     TextRenderer text(SCR_WIDTH, SCR_HEIGHT);
-
     text.Load("Fonts/OCRAEXT.TTF", 24);
     int level = 0;
     // render loop
@@ -123,34 +119,38 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shaderProgram.use();
-        shaderProgram.setVec3("vertexColor", glm::vec3(0.0f, 0.0f, 1.0f));
         // camera/view transformation
-        glm::mat4 projection = projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = projection = glm::perspective(glm::radians(game.getCam().Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         shaderProgram.setMat4("projection", projection);
-        glm::mat4 view = camera.GetViewMatrix();
+        glm::mat4 view = game.getCam().GetViewMatrix();
         shaderProgram.setMat4("view", view);
         if (level == 0)
         {
-            map1.Draw();
+            map1.Draw(movementX, movementZ);
+            game.getCam().getPos().x = map1.getPacmanPosition().x + movementX;
+            game.getCam().getPos().z = map1.getPacmanPosition().z + movementZ + 5.0f;
         }
         else
         {
-            map2.Draw();
+            map2.Draw(movementX, movementZ);
+            game.getCam().getPos().x = map2.getPacmanPosition().x + movementX;
+            game.getCam().getPos().z = map2.getPacmanPosition().z + movementZ + 5.0f;
         }
-        model = glm::translate(model, glm::vec3(movementX, 0.0f, 0.0f));
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, movementY));
-        shaderProgram.setMat4("model", model);
-        shaderProgram.setVec3("vertexColor", glm::vec3(1.0f, 1.0f, 0.0f));
-        pacman.draw();
-        text.RenderText("Texto de prueba", 5.0f, 5.0f, 1.0f);
+        std::stringstream ss;
+        ss << game.getLives();
+        text.RenderText("Lives: " + ss.str(), 5.0f, 5.0f, 1.0f);
         //Prueba 
         if (glfwGetKey(game.getWindow(), GLFW_KEY_M) == GLFW_PRESS)
         {
             level = 1;
+            movementX = 0.0f;
+            movementZ = 0.0f;
         }
         else if (glfwGetKey(game.getWindow(), GLFW_KEY_Z) == GLFW_PRESS)
         {
             level = 0;
+            movementX = 0.0f;
+            movementZ = 0.0f;
         }
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -180,21 +180,21 @@ void processInput(GLFWwindow* window)
     }
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {
-        movementY -= speed;
+        movementZ -= speed;
     }
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
     {
-        movementY += speed;
+        movementZ += speed;
     }
     /*float cameraSpeed = static_cast<float>(2.5 * deltaTime);*/
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
+        game.getCam().ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
+        game.getCam().ProcessKeyboard(BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
+        game.getCam().ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
+        game.getCam().ProcessKeyboard(RIGHT, deltaTime);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -223,12 +223,12 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
     lastX = xpos;
     lastY = ypos;
 
-    camera.ProcessMouseMovement(xoffset, yoffset);
+    game.getCam().ProcessMouseMovement(xoffset, yoffset);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    camera.ProcessMouseScroll(static_cast<float>(yoffset));
+    game.getCam().ProcessMouseScroll(static_cast<float>(yoffset));
 }

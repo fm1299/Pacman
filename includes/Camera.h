@@ -18,7 +18,7 @@ enum Camera_Movement
 
 // Default camera values
 const float YAW = -90.0f;
-const float PITCH = 0.0f;
+const float PITCH = -30.0f;
 const float SPEED = 4.5f;
 const float SENSITIVITY = 0.15f;
 const float ZOOM = 45.0f;
@@ -112,7 +112,10 @@ public:
         if (Zoom > 45.0f)
             Zoom = 45.0f;
     }
-
+    glm::vec3& getPos()
+    {
+        return this->Position;
+    }
 private:
     // calculates the front vector from the Camera's (updated) Euler Angles
     void updateCameraVectors()

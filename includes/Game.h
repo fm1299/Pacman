@@ -9,6 +9,8 @@ class Game
 private:
 	GLFWwindow *window;
 	Camera camera;
+	int lives;
+	int score;
 	int screen_width;
 	int screen_heigh;
 	void initOpengl();
@@ -16,8 +18,9 @@ private:
 public:
 	Game(int width, int height);
 	GLFWwindow*& getWindow();
+	Camera& getCam();
+	int getLives();
 	bool isOpen();
-	void render();
 	~Game();
 };
 inline void Game::initOpengl()
@@ -37,7 +40,7 @@ inline void Game::initWindow()
 	}
 }
 
-inline Game::Game(int width, int height) : camera(glm::vec3(0.0f, 0.0f, 3.0f))
+inline Game::Game(int width, int height) : camera(glm::vec3(0.0f, 4.5f, 4.0f)), lives(3), score(0)
 {
 	this->screen_width = width;
 	this->screen_heigh = height;
@@ -50,16 +53,20 @@ inline GLFWwindow*& Game::getWindow()
 	return this->window;
 }
 
+inline Camera& Game::getCam()
+{
+	return this->camera;
+}
+
+inline int Game::getLives()
+{
+	return this->lives;
+}
+
 inline bool Game::isOpen()
 {
 	return !glfwWindowShouldClose(window);
 }
-
-inline void Game::render()
-{
-
-}
-
 inline Game::~Game()
 {
 }
